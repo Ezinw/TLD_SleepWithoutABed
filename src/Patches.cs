@@ -11,10 +11,37 @@ namespace SleepWithoutABed
         {
             bool inVehicle = GameManager.GetPlayerInVehicle().IsInside();
             bool inSnowShelter = GameManager.GetSnowShelterManager().PlayerInShelter();
+            Rest sleep = GameManager.GetRestComponent();
+            Bed bed = __instance.m_Bed;
+
+            if (enable && bed != null)
+            {
+                sleep.m_ReduceFatiguePerHourRest = 8.333333333333333f;
+            }
 
             if (enable && __instance.m_Bed == null && !(inVehicle || inSnowShelter))
             {
                 passTimeOnly = false;
+
+                switch (Settings.settings.sleepPenalty)
+                {
+                    case Settings.Choice.Default:
+                        sleep.m_ReduceFatiguePerHourRest = 8.333333333333333f;
+                        break;
+                    case Settings.Choice.ThreeQuarters:
+                        sleep.m_ReduceFatiguePerHourRest = 6.25f;
+                        break;
+                    case Settings.Choice.Half:
+                        sleep.m_ReduceFatiguePerHourRest = 4.166666666666667f;
+                        break;
+                    case Settings.Choice.Quarter:
+                        sleep.m_ReduceFatiguePerHourRest = 2.083333333333333f;
+                        break;
+                    case Settings.Choice.Eighth:
+                         sleep.m_ReduceFatiguePerHourRest = 1.041666666666667f;
+                         break;
+                }
+                
             }
 
             else if (!enable && __instance.m_Bed != null)
