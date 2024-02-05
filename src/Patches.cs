@@ -19,7 +19,7 @@ namespace SleepWithoutABed
                 sleep.m_ReduceFatiguePerHourRest = 8.333333333333333f;
             }
 
-            if (enable && __instance.m_Bed == null && !(inVehicle || inSnowShelter))
+            if (enable && bed == null && !(inVehicle || inSnowShelter))
             {
                 passTimeOnly = false;
 
@@ -44,7 +44,7 @@ namespace SleepWithoutABed
                 
             }
 
-            else if (!enable && __instance.m_Bed != null)
+            else if (!enable && bed != null)
             {
                 __instance.m_Bed = null;
             }
