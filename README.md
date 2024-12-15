@@ -5,11 +5,11 @@ A mod for The Long Dark that allows players to sleep without a bed or bedroll. A
 - Fatigue Recovery Penalties:
 Players can choose one of the following penalties for fatigue recovery while sleeping without a bed/bedroll:
 
-    Full fatigue recovery (TLD Default)
-    3/4 fatigue recovery
-    1/2 fatigue recovery
-    1/4 fatigue recovery
-    1/8 fatigue recovery
+   - Full fatigue recovery (TLD Default)
+   - 3/4 fatigue recovery
+   - 1/2 fatigue recovery
+   - 1/4 fatigue recovery
+   - 1/8 fatigue recovery
 
 New Features: v2.0.0
 
