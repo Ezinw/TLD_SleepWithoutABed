@@ -25,5 +25,3 @@ Requirements:
 - [ModSettings](https://github.com/DigitalzombieTLD/ModSettings/releases/)
 
 Always backup your save before using any mods.
-
-- [Download](https://github.com/Ezinw/TLD_SleepWithoutABed/releases/tag/v1.1.0)
