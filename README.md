@@ -27,7 +27,7 @@ Interrupts sleep/passing time if health goes below the adjustable setting, givin
  - Fixed issue:  The player would not wake up if sleeping near a fire (without a bedroll), even if the option to wake up near a fire when sleeping was enabled at game creation.
 
 Requirements:
-- [The Long Dark](https://www.thelongdark.com/) (v2.35)
+- [The Long Dark](https://www.thelongdark.com/) (v2.39)
 - [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/tag/v0.6.6) (v0.6.6)
 - [ModSettings](https://github.com/DigitalzombieTLD/ModSettings/releases/)
 
