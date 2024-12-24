@@ -1,4 +1,5 @@
 ﻿using ModSettings;
+using System.Reflection;
 
 namespace SleepWithoutABed
 {
@@ -44,12 +45,12 @@ namespace SleepWithoutABed
 
         [Name("         - Freezing Health Loss")]
         [Description("Additional health loss from cold exposure when freezing. Increase to amplify health loss if sleeping or passing time without a bed/bedroll. (Mod default = 0.20)")]
-        [Slider(0.00f, 2.00f, NumberFormat = "{0:0.00}")]
+        [Slider(0.00f, 1.00f, NumberFormat = "{0:0.00}")]
         public float freezingHealthLoss = 0.20f;
 
         [Name("         - Hypothermic Health Loss")]
         [Description("Additional health loss from cold exposure when suffering from hypothermia. Increase to amplify health loss if sleeping or passing time without a bed/bedroll. (Mod default = 0.40)")]
-        [Slider(0.00f, 2.00f, NumberFormat = "{0:0.00}")]
+        [Slider(0.00f, 1.00f, NumberFormat = "{0:0.00}")]
         public float hypothermicHealthLoss = 0.40f;
 
         [Name("         - Pass Time Exposure")]
@@ -64,12 +65,54 @@ namespace SleepWithoutABed
         [Slider(0.00f, 3.30f, NumberFormat = "{0:0.00}")]
         public float nullBedConditionGainPerHour = 1.65f;
 
+        [Section(" ")]
+
+        [Name("         - Extra Options")]
+        [Description("Show or hide extra options")]
+        [Choice("+", "-")]
+        public bool extraOptions = false;
+
+        [Name("                  - Low Health Sleep Interruption")]
+        [Description("Interrupts sleep/passing time if health drops below the threshold, giving a chance of survival. A setting of 0.10 would wake the player at 10% health. Set to 0 to disable. (Mod default = 0.00)")]
+        [Slider(0.00f, 0.20f, NumberFormat = "{0:0.00}")]
+        public float lowHealthSleepInterruption = 0.00f;
+
+        [Name("                           - Interruption Cooldown")]
+        [Description("Control how often the sleep/passtime interruption occurs. It will only reoccur after this amount of time has passed (in seconds). (Default = 30)")]
+        [Slider(1, 60)]
+        public int interruptionCooldown = 30;
+
+        [Name("                                             - Apply Interruption to Beds?")]
+        [Description("Applies the low health sleep interruption to beds/bedrolls and wakes the player up if health drops below the threshold. (Mod default = Disabled)")]
+        [Choice("Disabled", "Enabled")]
+        public bool applyInterruptToBeds = false;
+
+        protected override void OnChange(FieldInfo field, object oldValue, object newValue)
+        {
+            if (field.Name == nameof(extraOptions) ||
+                field.Name == nameof(lowHealthSleepInterruption) ||
+                field.Name == nameof(interruptionCooldown) ||
+                field.Name == nameof(applyInterruptToBeds))
+
+            {
+                RefreshGUI();
+            }
+        }
+
+        internal void RefreshGUI()
+        {
+            SetFieldVisible(nameof(lowHealthSleepInterruption), extraOptions);
+            SetFieldVisible(nameof(interruptionCooldown), extraOptions);
+            SetFieldVisible(nameof(applyInterruptToBeds), extraOptions);
+        }
+
 
         internal static Settings settings;
         internal static void OnLoad()
         {
             settings = new Settings();
             settings.AddToModSettings("SleepWithoutABed");
+            settings.RefreshGUI();
         }
     }
 }

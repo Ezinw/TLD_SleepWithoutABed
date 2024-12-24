@@ -84,11 +84,11 @@ namespace SleepWithoutABed
     [HarmonyPatch(typeof(Rest), nameof(Rest.RollForRestInterruption))]
     public static class RollForRestInterruptionPatch
     {
-        static void Prefix(Rest __instance)
+        static bool Prefix(Rest __instance)
         {
             if (GameManager.m_IsPaused)
             {
-                return;
+                return true; // Allow original code to execute
             }
 
             var restComponent = GameManager.GetRestComponent();
@@ -103,7 +103,10 @@ namespace SleepWithoutABed
                     __instance.m_InterruptionAfterSecondsSleeping = Mathf.RoundToInt(Random.Range(0.3f, 0.9f) * __instance.m_SleepDurationSeconds);
                 }
             }
+
+            return true;
         }
+
     }
 
 

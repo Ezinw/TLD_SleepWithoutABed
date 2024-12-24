@@ -76,4 +76,20 @@ namespace SleepWithoutABed
             return weatherComponent.GetCurrentTemperatureWithWindchill();
         }
     }
+
+
+
+
+    public static class GetEffectiveMaxCondition
+    {
+        public static float CalculateMaxCondition()
+        {
+            // Get the condition component from the game manager
+            var conditionComponent = GameManager.GetConditionComponent();
+
+            // If the condition component exists, return its max HP value (e.g., accounts for buffs/debuffs).
+            // Otherwise, return the default max condition value of 100.
+            return conditionComponent != null ? conditionComponent.m_MaxHP : 100f;
+        }
+    }
 }
