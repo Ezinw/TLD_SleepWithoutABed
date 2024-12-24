@@ -19,6 +19,13 @@ Sleeping or passing time without a bed/bedroll causes players to freeze faster a
  - Health Recovery Adjustment:
 Fixed a major issue from the previous version where sleeping without a bed/bedroll did not restore health. Now, health is restored similarly to using a bed but at a reduced rate.
 
+v2.1.0
+Added feature
+ - Low health sleep interruption:
+Interrupts sleep/passing time if health goes below the adjustable setting, giving a chance of survival. Disabled by default. Can also be applied to beds/bedrolls(optional).
+
+ - Fixed issue:  The player would not wake up if sleeping near a fire (without a bedroll), even if the option to wake up near a fire when sleeping was enabled at game creation.
+
 Requirements:
 - [The Long Dark](https://www.thelongdark.com/) (v2.35)
 - [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/tag/v0.6.6) (v0.6.6)
