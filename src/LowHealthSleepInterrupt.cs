@@ -1,5 +1,5 @@
-﻿using HarmonyLib;
-using Il2Cpp;
+﻿using Il2Cpp;
+using HarmonyLib;
 using UnityEngine;
 
 namespace SleepWithoutABed
@@ -72,7 +72,7 @@ namespace SleepWithoutABed
                     // Record the time of this interruption
                     lastInterruptionTime = currentTime;
 
-                    HUDMessage.AddMessage(Localization.Get("You are about to fade into the long dark. Seek shelter and warmth!"), 5f, false, false);
+                    if (Settings.settings.hudMessage) HUDMessage.AddMessage(Localization.Get("You are about to fade into the long dark. Seek shelter and warmth!"), 5f, false, false);
 
                     // Fade in after sleep interruption
                     CameraFade.FadeIn(0.5f, 0f, null);
@@ -80,8 +80,6 @@ namespace SleepWithoutABed
             }
         }
     }
-
-
 
 
     [HarmonyPatch(typeof(PassTime), nameof(PassTime.UpdatePassingTime))]
@@ -135,8 +133,8 @@ namespace SleepWithoutABed
 
                 // Record the time of this interruption
                 lastInterruptionTime = currentTime;
-                
-                HUDMessage.AddMessage(Localization.Get("You are about to fade into the long dark. Seek shelther and warmth!"), 5f, false, false);
+
+                if (Settings.settings.hudMessage) HUDMessage.AddMessage(Localization.Get("You are about to fade into the long dark. Seek shelther and warmth!"), 5f, false, false);
             }
         }
     }

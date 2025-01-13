@@ -82,9 +82,14 @@ namespace SleepWithoutABed
         [Slider(1, 60)]
         public int interruptionCooldown = 30;
 
+        [Name("                           - Display HUD message?")]
+        [Description("Show or hide the HUD message to the player when sleep is interrupted. (Mod default = Yes)")]
+        [Choice("No", "Yes")]
+        public bool hudMessage = true;
+
         [Name("                                             - Apply Interruption to Beds?")]
-        [Description("Applies the low health sleep interruption to beds/bedrolls and wakes the player up if health drops below the threshold. (Mod default = Disabled)")]
-        [Choice("Disabled", "Enabled")]
+        [Description("Applies the low health sleep interruption to beds/bedrolls and wakes the player up if health drops below the threshold. (Mod default = No)")]
+        [Choice("No", "Yes")]
         public bool applyInterruptToBeds = false;
 
         protected override void OnChange(FieldInfo field, object oldValue, object newValue)
@@ -103,6 +108,7 @@ namespace SleepWithoutABed
         {
             SetFieldVisible(nameof(lowHealthSleepInterruption), extraOptions);
             SetFieldVisible(nameof(interruptionCooldown), extraOptions);
+            SetFieldVisible(nameof(hudMessage), extraOptions);
             SetFieldVisible(nameof(applyInterruptToBeds), extraOptions);
         }
 

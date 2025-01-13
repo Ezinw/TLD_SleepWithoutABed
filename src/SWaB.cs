@@ -1,6 +1,6 @@
 using Il2Cpp;
 using HarmonyLib;
-using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace SleepWithoutABed
 {
@@ -60,7 +60,6 @@ namespace SleepWithoutABed
     }
 
 
-    //Close the rest panel after clicking the sleep button if accessed through the pass time radial option.
     [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PlayerIsSleeping))]
     public class RestPanelX
     {
@@ -78,79 +77,88 @@ namespace SleepWithoutABed
             }
         }
 
-        //Simulate Escape Key Press.
+        // Close the rest panel
         public static void CloseRestPanel()
         {
-            const ushort VK_ESCAPE = 0x1B;
-            INPUT[] inputs = new INPUT[2];
-
-            // Press Escape key
-            inputs[0] = new INPUT();
-            inputs[0].type = INPUT_KEYBOARD;
-            inputs[0].u.ki.wVk = VK_ESCAPE;
-
-            // Release Escape key
-            inputs[1] = new INPUT();
-            inputs[1].type = INPUT_KEYBOARD;
-            inputs[1].u.ki.wVk = VK_ESCAPE;
-            inputs[1].u.ki.dwFlags = KEYEVENTF_KEYUP;
-
-            SendInput(2, inputs, Marshal.SizeOf(typeof(INPUT)));
-        }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
-
-        private const int INPUT_KEYBOARD = 1;
-        private const uint KEYEVENTF_KEYUP = 0x0002;
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct INPUT
-        {
-            public int type;
-            public INPUTUNION u;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct INPUTUNION
-        {
-            [FieldOffset(0)]
-            public MOUSEINPUT mi;
-            [FieldOffset(0)]
-            public KEYBDINPUT ki;
-            [FieldOffset(0)]
-            public HARDWAREINPUT hi;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct KEYBDINPUT
-        {
-            public ushort wVk;
-            public ushort wScan;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MOUSEINPUT
-        {
-            public int dx;
-            public int dy;
-            public uint mouseData;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct HARDWAREINPUT
-        {
-            public uint uMsg;
-            public ushort wParamL;
-            public ushort wParamH;
+            var restPanel = InterfaceManager.GetPanel<Panel_Rest>();
+            if (restPanel != null && restPanel.IsEnabled())
+            {
+                restPanel.Enable(false);
+            }
         }
     }
+
+
+    [HarmonyPatch(typeof(Panel_Rest), "DoRest")]
+    public static class PanelRestDoRestPatch
+    {
+        static bool Prefix(Panel_Rest __instance, int restAmount, bool wakeUpAtFullRest)
+        {
+            // Check if resting is blocked
+            if (GameManager.m_BlockAbilityToRest)
+            {
+                GameAudioManager.PlayGUIError();
+                return false;
+            }
+
+            // Check Cabin Fever
+            var cabinFever = GameManager.GetCabinFeverComponent();
+            if (cabinFever?.HasCabinFever() == true && GameManager.GetPlayerManagerComponent().InHibernationPreventionIndoorEnvironment())
+            {
+                GameAudioManager.PlayGUIError();
+                return false;
+            }
+
+            // Check Anxiety
+            var anxiety = GameManager.GetAnxietyComponent();
+            if (anxiety?.HasAffliction() == true && !anxiety.CanPassTime())
+            {
+                GameAudioManager.PlayGUIError();
+                return false;
+            }
+
+            // Check Fear
+            var fear = GameManager.GetFearComponent();
+            if (fear?.HasAffliction() == true)
+            {
+                GameAudioManager.PlayGUIError();
+                return false;
+            }
+
+            // Check if Rest is needed
+            var rest = GameManager.GetRestComponent();
+            if (rest == null)
+            {
+                return false; // Prevent crash
+            }
+
+            if (!rest.AllowUnlimitedSleep() && GameManager.GetFatigueComponent().m_CurrentFatigue <= __instance.m_AllowRestFatigueThreshold && !rest.RestNeededForAffliction())
+            {
+                GameAudioManager.PlayGUIError();
+                return false;
+            }
+
+            // Check Thin Ice
+            var iceCracking = GameManager.GetIceCrackingManager();
+            if (iceCracking?.IsInsideTrigger() == true)
+            {
+                GameAudioManager.PlayGUIError();
+                return false;
+            }
+
+            // Perform Rest Logic
+            rest.BeginSleeping(__instance.m_Bed, restAmount, __instance.m_MaxSleepHours);
+            __instance.m_Bed?.PlayOpenAudio();
+            __instance.m_Bed = null; // Reset bed reference
+            __instance.m_SkipRestoreItemInHandsOnExit = true;
+            __instance.Enable(false);
+            __instance.m_SkipRestoreItemInHandsOnExit = false;
+            rest.m_WakeUpAtFullRest = wakeUpAtFullRest;
+
+            return false; // Skip original method
+        }
+    }
+
 }
 
 

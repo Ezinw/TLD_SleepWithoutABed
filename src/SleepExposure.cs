@@ -1,8 +1,6 @@
 ﻿using Il2Cpp;
 using HarmonyLib;
 using System.Reflection;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace SleepWithoutABed
 {
@@ -23,8 +21,8 @@ namespace SleepWithoutABed
             var hypothermiaComponent = GameManager.GetHypothermiaComponent();
             var restComponent = GameManager.GetRestComponent();
 
-            if (freezingComponent == null || 
-                conditionComponent == null || 
+            if (freezingComponent == null ||
+                conditionComponent == null ||
                 restComponent == null ||
                 restComponent.IsForcedSleep())
             {
@@ -56,29 +54,27 @@ namespace SleepWithoutABed
         }
     }
 
-    
+
     [HarmonyPatch(typeof(Rest), nameof(Rest.ShouldInterruptWithPredator))]
-    public static class PredatorInterruptPatch
+    public static class ShouldInterruptWithPredatorPatch
     {
         static bool Prefix(Rest __instance, ref bool __result)
         {
-            if (GameManager.m_IsPaused)
+            if (__instance == null)
             {
-                return true;
+                __result = false;
+                return false;
             }
 
-            var restComponent = GameManager.GetRestComponent();
-
-            if (__instance.m_Bed == null && restComponent != null)
+            if (__instance.m_Bed == null)
             {
-                // Force interruption calculation when no bed is present
-                __result = true; // Let the game calculate further interruption logic
-                return false;    // Skip the original method
+                __result = false;
             }
 
-            return true; // Allow the original method to run if a bed is present
+            return true;
         }
     }
+
 
 
     [HarmonyPatch(typeof(Rest), nameof(Rest.RollForRestInterruption))]
@@ -86,27 +82,21 @@ namespace SleepWithoutABed
     {
         static bool Prefix(Rest __instance)
         {
-            if (GameManager.m_IsPaused)
+            if (__instance == null)
             {
-                return true; // Allow original code to execute
+                return false; // Skip the original method
             }
 
-            var restComponent = GameManager.GetRestComponent();
-
-            if (__instance.m_Bed == null && restComponent != null)
+            if (__instance.m_Bed == null)
             {
-                // Keep the original behavior but ensure predator interruptions are considered
-                __instance.m_PredatorInterruption = __instance.ShouldInterruptWithPredator();
-                if (__instance.m_PredatorInterruption)
-                {
-                    // Randomize interruption time as in the original logic
-                    __instance.m_InterruptionAfterSecondsSleeping = Mathf.RoundToInt(Random.Range(0.3f, 0.9f) * __instance.m_SleepDurationSeconds);
-                }
+                __instance.m_PredatorInterruption = false; // No predator interruptions without a bed
+                __instance.m_InterruptionAfterSecondsSleeping = 0; // Reset interruption time
+                return false; // Skip original method to avoid further execution
             }
 
+            // Allow the original method to execute if conditions are met
             return true;
         }
-
     }
 
 
@@ -124,7 +114,7 @@ namespace SleepWithoutABed
 
             if (method == null)
             {
-                throw new NullReferenceException();
+                throw new NullReferenceException("NRE 'BeginSleeping' ");
             }
 
             return method;
@@ -132,15 +122,18 @@ namespace SleepWithoutABed
 
         static void Prefix(Rest __instance, Bed? b, int durationHours, int maxHours, float fadeOutDuration, Rest.PassTimeOptions options, ref Il2CppSystem.Action? onSleepEnd)
         {
-            var restComponent = GameManager.GetRestComponent();
-
-            if (__instance == null || GameManager.m_IsPaused || b != null|| restComponent == null)
+            if (__instance == null)
             {
                 return;
             }
 
-            SleepExposureEffect.ApplySleepExposureEffect();
+            if (__instance.m_Bed == null)
+            {
+                SleepExposureEffect.ApplySleepExposureEffect();
+            }
         }
     }
+
+
 }
 
