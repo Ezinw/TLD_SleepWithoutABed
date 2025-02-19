@@ -2,7 +2,7 @@
 
 A mod for The Long Dark that allows players to sleep without a bed or bedroll. Accessed through the "Pass Time" option in the radial menu.
 
-v2.2.0
+v2.2.0  [Download]([https://www.thelongdark.com/](https://github.com/Ezinw/TLD_SleepWithoutABed/releases/tag/v2.2.0))
 - Changed the way the player sleeps without a bed. The mod no longer relies on a nonexistent(null) bed; instead, it creates a temporary low-condition clone of a bedroll that is destroyed after use.
 - Added a setting to control the probability that a predator will interrupt sleep with an attack.
 - Added settings to further control how temperature affects cold exposure penalties.(Optional/Experimental).
@@ -10,8 +10,6 @@ v2.2.0
 - Bug fix: Condition recovery no longer occurs if the player is dehydrated or starving.
 
 - It seems that predator attacks during rest are bugged. Sometimes the camera will act strangely or break keeping the screen black (faded out) throughout a struggle.
-
-
 
 Mod Features:
 
