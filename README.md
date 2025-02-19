@@ -11,6 +11,8 @@ v2.2.0
 
 - It seems that predator attacks during rest are bugged. Sometimes the camera will act strangely or break keeping the screen black (faded out) throughout a struggle.
 
+
+
 Mod Features:
 
 Fatigue Recovery Penalties
