@@ -4,23 +4,6 @@ using UnityEngine;
 
 namespace SleepWithoutABed
 {
-    [HarmonyPatch(typeof(Rest), nameof(Rest.RollForRestInterruption))]
-    public static class SWaB_PredatorInterruptionChance
-    {
-        static void Prefix(Rest __instance)
-        {
-            if (__instance == null)
-            {
-                return;
-            }
-
-            // Settings for predator rest interruptions
-            __instance.m_ChancePredatorInterruptionInsideSpawnRegion = Settings.settings.predatorRestInterruption;
-            __instance.m_ChancePredatorInterruptionInsideSpawnRegionWhenInSnowShelter = Settings.settings.predatorRestInterruptionShelter;
-        }
-    }
-
-
     // Low health sleep interruption
     [HarmonyPatch(typeof(Rest), nameof(Rest.UpdateWhenSleeping))]
     public static class SWaB_SleepInterruption
@@ -35,8 +18,8 @@ namespace SleepWithoutABed
                 return;
 
             bool applyInterruptToBeds = Settings.settings.applyInterruptToBeds;
-            bool isClonedBedroll = SWaB._clonedBedroll != null && __instance.m_Bed == SWaB._clonedBedroll?.GetComponent<Bed>();
-            bool isRealBed = __instance.m_Bed != null && !isClonedBedroll;
+            bool isTempBedroll = SWaB._tempBedroll != null;
+            bool isRealBed = __instance.m_Bed != null && !isTempBedroll;
 
             if (isRealBed && !applyInterruptToBeds)
                 return;
@@ -50,7 +33,7 @@ namespace SleepWithoutABed
             // Calculate effective max condition
             float effectiveMaxCondition = GetEffectiveMaxCondition.CalculateMaxCondition();
             float currentConditionPercentage = conditionComponent.m_CurrentHP / effectiveMaxCondition;
-            float conditionThreshold = Settings.settings.lowHealthSleepInterruption;
+            float conditionThreshold = Settings.settings.sleepInterruptionThreshold;
 
             // Check if the player is freezing
             bool isFreezing = freezingComponent.IsFreezing();
@@ -102,8 +85,8 @@ namespace SleepWithoutABed
                 return;
 
             bool applyInterruptToBeds = Settings.settings.applyInterruptToBeds;
-            bool isClonedBedroll = SWaB._clonedBedroll != null && __instance.m_Bed == SWaB._clonedBedroll?.GetComponent<Bed>();
-            bool isRealBed = __instance.m_Bed != null && !isClonedBedroll;
+            bool isTempBedroll = SWaB._tempBedroll != null;
+            bool isRealBed = __instance.m_Bed != null && !isTempBedroll;
 
             if (isRealBed && !applyInterruptToBeds)
                 return;
@@ -117,7 +100,7 @@ namespace SleepWithoutABed
             // Calculate effective max condition
             float effectiveMaxCondition = GetEffectiveMaxCondition.CalculateMaxCondition();
             float currentConditionPercentage = conditionComponent.m_CurrentHP / effectiveMaxCondition;
-            float conditionThreshold = Settings.settings.lowHealthSleepInterruption;
+            float conditionThreshold = Settings.settings.sleepInterruptionThreshold;
 
             // Check if the player is freezing
             bool isFreezing = freezingComponent.IsFreezing();
