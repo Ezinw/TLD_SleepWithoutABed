@@ -14,7 +14,7 @@ Health Recovery Adjustment:
 - Health is restored similarly to using a bed but at an adjusted rate (adjustable setting).
 
 Low health sleep interruption:
-- Interrupts sleep or passing time if health goes below the threshold (adjustable setting), giving a chance of survival. Can also be applied to real beds/bedrolls(enabled by default).
+- Interrupts sleep or passing time if health goes below the threshold (adjustable setting), giving a chance of survival. Can also be applied to real beds/bedrolls (enabled by default).
 
 Requirements:
 - [The Long Dark](https://www.thelongdark.com/) (v2.51)
